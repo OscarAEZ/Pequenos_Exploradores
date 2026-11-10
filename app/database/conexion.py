@@ -1,63 +1,66 @@
 
+"""Configuración y apertura de conexiones con MySQL."""
+
 import os
 from pathlib import Path
 
 import mysql.connector
-from mysql.connector import Error
 from dotenv import load_dotenv
 
-# Cargar la configuración privada del proyecto
-RUTA_ENV = Path(__file__).resolve().parents[2] / ".env"
+
+# Ruta principal del proyecto
+RUTA_PROYECTO = Path(__file__).resolve().parents[2]
+
+# Cargar las credenciales desde .env
+RUTA_ENV = RUTA_PROYECTO / ".env"
 load_dotenv(RUTA_ENV)
 
 
-def obtener_menores():
-    conexion = None
-    cursor = None
+def obtener_conexion():
+    """Abre una conexión nueva con la base de datos."""
+
+    host = os.getenv("DB_HOST", "127.0.0.1").strip()
+    puerto = os.getenv("DB_PORT", "3306").strip()
+    usuario = os.getenv("DB_USER", "root").strip()
+    contrasena = os.getenv("DB_PASSWORD", "")
+    base_datos = os.getenv(
+        "DB_NAME", "pequenos_exploradores"
+    ).strip()
+
+    if not host or not usuario or not base_datos:
+        raise ValueError(
+            "Faltan datos de conexión. Revisa el archivo .env."
+        )
 
     try:
-        # Datos de conexión obtenidos del archivo .env
-        conexion = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            port=int(os.getenv("DB_PORT")),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME")
-        )
+        puerto = int(puerto)
+    except (TypeError, ValueError) as error:
+        raise ValueError(
+            "DB_PORT debe contener un puerto válido."
+        ) from error
 
-        cursor = conexion.cursor()
-
-        # Consulta real a la tabla Menor
-        cursor.execute(
-            "SELECT idMenor, nombreCompleto "
-            "FROM Menor ORDER BY idMenor"
-        )
-
-        return cursor.fetchall()
-
-    finally:
-        if cursor is not None:
-            cursor.close()
-
-        if conexion is not None and conexion.is_connected():
-            conexion.close()
+    return mysql.connector.connect(
+        host=host,
+        port=puerto,
+        user=usuario,
+        password=contrasena,
+        database=base_datos,
+        connection_timeout=5,
+        charset="utf8mb4",
+        use_unicode=True
+    )
 
 
 def probar_conexion():
-    print("Prueba de conexión - Pequeños Exploradores")
+    """Comprueba si MySQL responde correctamente."""
+
+    conexion = None
 
     try:
-        menores = obtener_menores()
+        conexion = obtener_conexion()
+        return conexion.is_connected()
 
-        print("\nConsulta ejecutada correctamente.")
-        print(f"Menores registrados: {len(menores)}")
+    finally:
+        if conexion is not None and conexion.is_connected():
+            conexion.close()
 
-        for id_menor, nombre in menores:
-            print(f"{id_menor} - {nombre}")
-
-    except (Error, ValueError, TypeError) as error:
-        print(f"Error al consultar MySQL: {error}")
-
-
-if __name__ == "__main__":
-    probar_conexion()
