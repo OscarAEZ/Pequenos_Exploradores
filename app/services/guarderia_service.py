@@ -43,14 +43,18 @@ def consultar(sql, parametros=()):
 # --------------------------------------------------
 
 def obtener_resumen():
+
     consultas = {
         "menores": "SELECT COUNT(*) AS total FROM Menor",
+
         "avisos": "SELECT COUNT(*) AS total FROM Aviso",
+
         "pendientes": """
             SELECT COUNT(*) AS total
             FROM Aviso
             WHERE idEducadora IS NULL
         """,
+
         "autorizaciones": """
             SELECT COUNT(*) AS total
             FROM AutorizacionRetiro
@@ -60,9 +64,12 @@ def obtener_resumen():
     resultado = {}
 
     with sesion_bd() as (_, cursor):
+
         for clave, sql in consultas.items():
+
             cursor.execute(sql)
             fila = cursor.fetchone()
+
             resultado[clave] = fila["total"] if fila else 0
 
     return resultado
@@ -73,6 +80,7 @@ def obtener_resumen():
 # --------------------------------------------------
 
 def listar_menores():
+
     return consultar("""
         SELECT idMenor, nombreCompleto
         FROM Menor
@@ -81,6 +89,7 @@ def listar_menores():
 
 
 def obtener_menor(id_menor):
+
     filas = consultar("""
         SELECT idMenor, nombreCompleto
         FROM Menor
@@ -91,8 +100,11 @@ def obtener_menor(id_menor):
 
 
 def listar_tutores_por_menor(id_menor):
+
     return consultar("""
-        SELECT t.idTutor, t.nombreCompleto
+        SELECT
+            t.idTutor,
+            t.nombreCompleto
         FROM Tutor t
         INNER JOIN TutorMenor tm
             ON tm.idTutor = t.idTutor
@@ -102,6 +114,7 @@ def listar_tutores_por_menor(id_menor):
 
 
 def listar_recepcionistas():
+
     return consultar("""
         SELECT idRecepcionista, nombre
         FROM Recepcionista
@@ -110,6 +123,7 @@ def listar_recepcionistas():
 
 
 def listar_educadoras():
+
     return consultar("""
         SELECT idEducadora, nombre
         FROM Educadora
@@ -127,6 +141,7 @@ def registrar_aviso(
     id_recepcionista,
     descripcion
 ):
+
     descripcion = (descripcion or "").strip()
 
     if not descripcion:
@@ -158,6 +173,7 @@ def registrar_aviso(
         ))
 
         id_aviso = cursor.lastrowid
+
         conexion.commit()
 
         return id_aviso
@@ -168,6 +184,7 @@ def registrar_aviso(
 # --------------------------------------------------
 
 def listar_avisos_pendientes_comunicacion():
+
     return consultar("""
         SELECT
             a.idAviso,
@@ -194,10 +211,15 @@ def comunicar_aviso(id_aviso, id_educadora):
 
         cursor.execute("""
             UPDATE Aviso
-            SET idEducadora = %s
+            SET
+                idEducadora = %s,
+                fechaComunicacion = NOW()
             WHERE idAviso = %s
             AND idEducadora IS NULL
-        """, (id_educadora, id_aviso))
+        """, (
+            id_educadora,
+            id_aviso
+        ))
 
         if cursor.rowcount != 1:
             raise ValueError(
@@ -212,10 +234,12 @@ def comunicar_aviso(id_aviso, id_educadora):
 # --------------------------------------------------
 
 def listar_avisos_por_educadora(id_educadora):
+
     return consultar("""
         SELECT
             a.idAviso,
             a.descripcion,
+            a.fechaComunicacion,
             a.idMenor,
             m.nombreCompleto AS menor,
             t.nombreCompleto AS tutor,
@@ -237,10 +261,12 @@ def listar_avisos_por_educadora(id_educadora):
 # --------------------------------------------------
 
 def listar_avisos_por_menor(id_menor):
+
     return consultar("""
         SELECT
             a.idAviso,
             a.descripcion,
+            a.fechaComunicacion,
             t.nombreCompleto AS tutor,
             r.nombre AS recepcionista,
             e.nombre AS educadora
@@ -261,6 +287,7 @@ def listar_avisos_por_menor(id_menor):
 # --------------------------------------------------
 
 def listar_personas_autorizadas(id_menor):
+
     return consultar("""
         SELECT
             pa.idPersonaAutorizada,
@@ -276,7 +303,7 @@ def listar_personas_autorizadas(id_menor):
 
 
 # --------------------------------------------------
-# CU-07: ACLARAR DIFERENCIAS DE INFORMACIÓN
+# CU-07: CONTEXTO PARA ACLARAR DIFERENCIAS
 # --------------------------------------------------
 
 def obtener_contexto_aclaracion(id_menor):
@@ -287,6 +314,7 @@ def obtener_contexto_aclaracion(id_menor):
         return None
 
     tutores = listar_tutores_por_menor(id_menor)
+
     avisos = listar_avisos_por_menor(id_menor)
 
     return {

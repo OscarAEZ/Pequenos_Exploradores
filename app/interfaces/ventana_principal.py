@@ -1436,12 +1436,22 @@ class VentanaPrincipal(ctk.CTk):
 
         if avisos:
             for aviso in avisos:
+                fecha = aviso.get("fechaComunicacion")
+
+                if fecha is None:
+                    fecha_texto = "Pendiente de comunicación"
+                elif hasattr(fecha, "strftime"):
+                    fecha_texto = fecha.strftime("%d/%m/%Y %H:%M")
+                else:
+                    fecha_texto = str(fecha)
+
                 lineas.extend([
                     f"Folio: {aviso['idAviso']}",
                     f"Descripción: {aviso['descripcion']}",
                     f"Tutor: {aviso['tutor']}",
                     f"Recepcionista: {aviso['recepcionista']}",
                     f"Educadora: {aviso['educadora'] or 'Pendiente de comunicación'}",
+                    f"Fecha de comunicación: {fecha_texto}",
                     ""
                 ])
         else:
