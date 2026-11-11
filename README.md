@@ -1,234 +1,384 @@
-# Sistema de Gestión de la Guardería “Pequeños Exploradores”
+# Sistema de Gestión de la Guardería «Pequeños Exploradores»
 
 **Ingeniería de Software — Unidad 3, Evidencia 1**  
 **Equipo 14**
 
-**Integrantes:**
+### Integrantes
 - Ayala Esquivel Oscar Zabdiel
 - Salazar Paredes Alejandro
 
+---
+
 ## 1. Descripción del proyecto
 
-“Pequeños Exploradores” es un sistema de gestión para una guardería, diseñado para apoyar al personal en el registro y comunicación de avisos e indicaciones, la consulta de información de los menores y la verificación de las personas autorizadas para recogerlos.
+«Pequeños Exploradores» es un sistema de gestión para una guardería, desarrollado para apoyar las actividades del personal de recepción y las educadoras.
 
-Se desarrollará como una aplicación de escritorio, procurando que su interfaz sea sencilla, organizada y fácil de utilizar.
+El sistema permite registrar y comunicar avisos e indicaciones sobre los menores, consultar información relacionada con ellos y verificar las personas autorizadas para recogerlos.
+
+La aplicación se desarrolla como un programa de escritorio, con una interfaz gráfica sencilla y organizada, utilizando una estructura que separa las interfaces, los servicios y las operaciones de conexión con la base de datos.
+
+El acceso al sistema se realiza mediante cuentas de usuario, diferenciando las funciones disponibles para recepción y educadoras.
 
 ## 2. Tecnologías utilizadas
 
-- **Lenguaje:** Python 3.13.7.
-- **Interfaz gráfica:** CustomTkinter 6.0.0.
-- **Entorno de desarrollo:** Visual Studio Code.
-- **Base de datos:** MySQL Server 9.5.0.
-- **Administración de la BD:** MySQL Workbench.
-- **Conexión Python–MySQL:** mysql-connector-python 26.10.0.
-- **Configuración local:** python-dotenv 1.2.4.
-- **Control de versiones:** Git, GitHub y GitHub Desktop.
+| Tecnología | Uso |
+|---|---|
+| Python 3.13.7 | Lenguaje de programación |
+| CustomTkinter 6.0.0 | Desarrollo de interfaces gráficas |
+| Visual Studio Code | Entorno de desarrollo |
+| MySQL Server 9.5.0 | Sistema gestor de bases de datos |
+| MySQL Workbench | Administración de la base de datos |
+| mysql-connector-python | Conexión entre Python y MySQL |
+| python-dotenv | Administración de variables de entorno |
+| Git y GitHub | Control de versiones |
+| GitHub Desktop | Administración visual del repositorio |
+
+Las dependencias del proyecto se encuentran registradas en `requirements.txt`.
 
 ## 3. Estructura del proyecto
 
+El proyecto se organiza en carpetas para mantener separado el código de la aplicación, las interfaces gráficas, los servicios y los archivos de la base de datos.
+
 ```text
 Pequenos_Exploradores/
+│
 ├── app/
-│   ├── main.py
 │   ├── database/
 │   │   └── conexion.py
+│   │
 │   ├── interfaces/
-│   └── services/
+│   │   ├── recursos_guarderia/
+│   │   ├── __init__.py
+│   │   ├── login.py
+│   │   ├── ventana_principal.py
+│   │   └── ventana_educadora.py
+│   │
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── autenticacion_service.py
+│   │   └── guarderia_service.py
+│   │
+│   ├── crear_usuario.py
+│   └── main.py
+│
 ├── database/
 │   ├── schema.sql
-│   └── datos_prueba.sql
+│   ├── datos_prueba.sql
+│   └── usuarios.sql
+│
 ├── docs/
+│
 ├── .env.example
 ├── .gitignore
 ├── README.md
 └── requirements.txt
 ```
 
-La carpeta `app` contiene el código de la aplicación. La carpeta `database` contiene los scripts para preparar MySQL. El archivo `requirements.txt` registra las dependencias necesarias para ejecutar el proyecto.
+**Descripción de las carpetas principales:**
 
-## 4. Preparación del entorno
+- `app/database/`: contiene la conexión de Python con MySQL.
+- `app/interfaces/`: contiene las ventanas y componentes gráficos del sistema.
+- `app/interfaces/recursos_guarderia/`: almacena imágenes, iconos y recursos visuales.
+- `app/services/`: contiene las operaciones del sistema y las consultas SQL.
+- `database/`: contiene los scripts para crear las tablas y preparar los datos de demostración.
+- `docs/`: almacena documentación relacionada con el proyecto.
 
-Para ejecutar el proyecto en otra computadora se necesita Python 3.13, MySQL Server y las dependencias indicadas.
+## 4. Requisitos para ejecutar el proyecto
 
-**Paso 1.** Descargar el repositorio y abrir su carpeta en Visual Studio Code.
+Para utilizar el sistema en otra computadora se necesita:
 
-**Paso 2.** Crear un entorno virtual desde la terminal:
+- Python 3.13.
+- MySQL Server.
+- MySQL Workbench.
+- Visual Studio Code (recomendado).
+- Las dependencias registradas en `requirements.txt`.
+
+También se requiere contar con acceso a la base de datos local y configurar correctamente sus credenciales.
+
+## 5. Preparación del entorno de desarrollo
+
+### Paso 1. Descargar el proyecto
+
+Clonar el repositorio de GitHub o descargarlo como archivo ZIP.
+
+Abrir la carpeta principal `Pequenos_Exploradores` desde Visual Studio Code.
+
+### Paso 2. Crear el entorno virtual
+
+Abrir una terminal de PowerShell y ejecutar:
 
 ```powershell
 py -m venv .venv
 ```
 
-**Paso 3.** Activar el entorno virtual en PowerShell:
+### Paso 3. Activar el entorno virtual
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-**Paso 4.** Instalar las dependencias:
-
-```powershell
-python -m pip install -r requirements.txt
-```
-
-Si PowerShell bloquea la activación del entorno, se puede habilitar temporalmente para la terminal actual mediante:
+Si PowerShell bloquea la activación, ejecutar:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-Después se repite el comando de activación.
+Después repetir el comando de activación.
 
-## 5. Creación de la base de datos
+### Paso 4. Instalar las dependencias
 
-La base de datos se llama `pequenos_exploradores` y se implementó a partir del modelo relacional corregido de U2-E2.
+Con el entorno virtual activado, ejecutar:
 
-El mecanismo utilizado para crearla es el script `database/schema.sql`. No se emplean migraciones adicionales.
+```powershell
+python -m pip install --upgrade pip
+```
 
-**Procedimiento:**
+Posteriormente:
+
+```powershell
+python -m pip install -r requirements.txt
+```
+
+Este procedimiento instala las bibliotecas necesarias para ejecutar la aplicación.
+
+## 6. Creación de la base de datos
+
+La base de datos del proyecto se llama `pequenos_exploradores`.
+
+Su estructura se desarrolló tomando como referencia el modelo relacional corregido de la Unidad 2, Evidencia 2.
+
+El modelo relacional contempla las siguientes ocho tablas:
+
+1. `Tutor`
+2. `Menor`
+3. `TutorMenor`
+4. `Recepcionista`
+5. `Educadora`
+6. `Aviso`
+7. `PersonaAutorizada`
+8. `AutorizacionRetiro`
+
+Adicionalmente, se utiliza la tabla `Usuario` para administrar las cuentas de acceso al sistema.
+
+### Procedimiento de creación
 
 1. Abrir MySQL Workbench.
-2. Conectarse a MySQL Server con un usuario que tenga permisos para crear bases de datos y tablas.
-3. Abrir `database/schema.sql`.
-4. Ejecutar todas sus instrucciones en la conexión activa.
-5. Actualizar la lista de esquemas para comprobar que se creó `pequenos_exploradores`.
-6. Verificar que aparezcan las ocho tablas del modelo.
+2. Conectarse al servidor MySQL local.
+3. Abrir el archivo `database/schema.sql`.
+4. Ejecutar las instrucciones para crear la base de datos y sus tablas.
+5. Ejecutar `database/usuarios.sql` para preparar la tabla de usuarios, si todavía no está incluida en el esquema principal.
+6. Ejecutar `database/datos_prueba.sql` para insertar los registros ficticios.
+7. Actualizar la lista de esquemas y comprobar que la base de datos esté disponible.
 
-Las tablas son:
-
-- `Tutor`
-- `Menor`
-- `TutorMenor`
-- `Recepcionista`
-- `Educadora`
-- `Aviso`
-- `PersonaAutorizada`
-- `AutorizacionRetiro`
-
-Para comprobar su creación se puede ejecutar:
+Para verificar la creación se puede ejecutar:
 
 ```sql
 USE pequenos_exploradores;
+
 SHOW TABLES;
 ```
 
-El diseño utiliza claves primarias y foráneas para mantener las relaciones entre los registros. En particular, `Aviso` incluye una clave foránea compuesta hacia `TutorMenor`, que permite validar la asociación entre tutor y menor.
+El diseño utiliza claves primarias y foráneas para mantener la integridad de los datos.
 
-## 6. Datos ficticios para la demostración
+En particular, la tabla `Aviso` utiliza una relación compuesta con `TutorMenor`, permitiendo validar que el tutor esté relacionado con el menor al que corresponde el aviso.
 
-El archivo `database/datos_prueba.sql` contiene instrucciones para insertar datos ficticios.
+## 7. Datos ficticios para las pruebas
 
-Para utilizarlos:
+El archivo `database/datos_prueba.sql` contiene registros de demostración utilizados durante el desarrollo y las pruebas del sistema.
 
-1. Abrir el script en MySQL Workbench.
-2. Ejecutarlo en el servidor donde se creó la base de datos.
-3. Consultar la tabla `Menor` mediante:
+Entre ellos se encuentran:
+
+- Menor ficticio A.
+- Menor ficticio B.
+- Tutores ficticios.
+- Recepcionistas y educadoras.
+- Avisos e indicaciones.
+- Personas autorizadas y sus estados de autorización.
+
+Estos registros permiten probar las operaciones sin utilizar información personal real.
+
+Para comprobar los menores registrados se puede ejecutar:
 
 ```sql
+USE pequenos_exploradores;
+
 SELECT idMenor, nombreCompleto
 FROM Menor
 ORDER BY idMenor;
 ```
 
-En una base de datos recién preparada con estos scripts deben aparecer dos menores de demostración:
+## 8. Configuración de la conexión con MySQL
 
-- Menor ficticio A.
-- Menor ficticio B.
+El sistema utiliza variables de entorno para establecer la conexión con MySQL.
 
-Estos registros se utilizan únicamente con fines académicos; no contienen información personal real.
+En la carpeta principal se encuentra el archivo `.env.example`.
 
-## 7. Configuración de la conexión
+Se debe copiar este archivo, crear una copia llamada `.env` y completar los datos correspondientes al servidor local.
 
-El proyecto utiliza variables de entorno para configurar la conexión entre Python y MySQL.
-
-Se debe copiar el archivo `.env.example`, guardarlo como `.env` en la carpeta principal del proyecto y completar los valores correspondientes al servidor local.
-
-Ejemplo de configuración:
+Ejemplo:
 
 ```dotenv
 DB_HOST=127.0.0.1
 DB_PORT=3305
 DB_USER=root
-DB_PASSWORD=
+DB_PASSWORD=TU_CONTRASEÑA
 DB_NAME=pequenos_exploradores
 ```
 
-El puerto `3305` corresponde al entorno local utilizado durante el desarrollo. En otra computadora debe indicarse el puerto real del servidor MySQL.
+**Importante:**
 
-El usuario y la contraseña deben sustituirse por credenciales válidas del entorno donde se ejecute el proyecto.
+- El puerto `3305` corresponde al entorno local utilizado durante el desarrollo.
+- En otra computadora debe configurarse el puerto real del servidor MySQL.
+- El usuario y la contraseña deben corresponder a una cuenta válida.
+- El archivo `.env` contiene información privada y no debe publicarse en GitHub.
+- El repositorio solamente debe incluir `.env.example`, sin credenciales reales.
 
-**Importante:** `.env` contiene información privada y no debe publicarse en GitHub. El repositorio solamente incluye `.env.example`, sin contraseñas reales.
+## 9. Creación de cuentas de usuario
 
-## 8. Ejecución de la aplicación
+El sistema cuenta con un módulo para crear cuentas de acceso para los dos roles disponibles:
 
-Con el entorno virtual activado, las dependencias instaladas, la base de datos preparada y el archivo `.env` configurado, ejecutar:
+- Recepcionista.
+- Educadora.
 
-```powershell
-python app/main.py
-```
-
-Se abrirá una ventana de escritorio creada con CustomTkinter.
-
-En la versión técnica de U3-E1, la ventana incluye el botón **“Consultar menores de prueba”**.
-
-Al presionarlo, la aplicación ejecuta una consulta a MySQL y muestra los registros ficticios almacenados en la tabla `Menor`.
-
-También es posible ejecutar la prueba desde la terminal:
+Para crear una cuenta se debe ejecutar desde la carpeta principal del proyecto, con el entorno virtual activado:
 
 ```powershell
-python app/database/conexion.py
+python -m app.crear_usuario
 ```
 
-## 9. Demostración técnica realizada
+El programa solicitará:
 
-Durante U3-E1 se comprobó que:
+1. Seleccionar el tipo de usuario.
+2. Elegir el registro de la recepcionista o educadora correspondiente.
+3. Escribir un nombre de usuario de al menos cuatro caracteres.
+4. Introducir una contraseña de al menos ocho caracteres.
+5. Confirmar la contraseña.
 
-- El proyecto se ejecuta correctamente en Python.
-- CustomTkinter permite abrir una ventana gráfica.
-- MySQL contiene las ocho tablas implementadas.
-- Los datos ficticios se almacenan en la base de datos.
-- Python establece una conexión con MySQL mediante `mysql-connector-python`.
-- La aplicación ejecuta una consulta real y recupera dos registros ficticios.
+Una vez completado el procedimiento, el sistema registra la cuenta y permite utilizarla para iniciar sesión.
 
-La operación utilizada es:
+Las cuentas se relacionan con los registros existentes de recepción y educadoras en la base de datos.
 
-```sql
-SELECT idMenor, nombreCompleto
-FROM Menor
-ORDER BY idMenor;
+## 10. Ejecución de la aplicación
+
+Antes de iniciar el sistema se debe comprobar que:
+
+- El entorno virtual esté activado.
+- Las dependencias estén instaladas.
+- MySQL Server se encuentre en ejecución.
+- La base de datos esté creada.
+- El archivo `.env` esté configurado correctamente.
+- Exista una cuenta de usuario registrada.
+
+Para iniciar la aplicación se ejecuta:
+
+```powershell
+python -m app.main
 ```
 
-El archivo `app/database/conexion.py` realiza la consulta y `app/main.py` presenta los resultados en la interfaz gráfica.
+Se abrirá la ventana de inicio de sesión de «Pequeños Exploradores».
 
-## 10. Estado actual y trabajo pendiente
+Después de introducir las credenciales, el sistema identifica el rol del usuario y muestra la interfaz correspondiente.
 
-**Completado en U3-E1:**
+### Acceso de recepción
 
-- Preparación del entorno de desarrollo.
-- Organización inicial del proyecto.
-- Instalación de dependencias.
-- Implementación de la base de datos.
-- Creación de scripts SQL.
-- Inserción de datos ficticios.
-- Demostración de conexión entre Python y MySQL.
-- Preparación del repositorio y su documentación.
+La recepcionista cuenta con funciones para:
 
-**Pendiente para las siguientes etapas:**
+- Registrar avisos e indicaciones.
+- Comunicar avisos a las educadoras.
+- Consultar personas autorizadas para recoger a los menores.
+- Consultar información relacionada con los menores.
+- Aclarar diferencias de información.
 
-- Implementar los casos de uso aprobados.
-- Desarrollar las interfaces definitivas conforme a los prototipos de U2-E3.
-- Integrar las funciones del sistema.
-- Completar las comprobaciones y la documentación de las siguientes evidencias.
+### Acceso de educadoras
 
-Los prototipos de U2-E3 contemplan colores pastel, elementos decorativos de ositos y controles adecuados para el personal de la guardería.
+La educadora cuenta con funciones para:
 
-La ventana presentada en U3-E1 es únicamente una demostración técnica y no representa la interfaz definitiva del sistema.
+- Consultar los avisos que le fueron comunicados.
+- Visualizar la información del menor relacionada con cada aviso.
+- Actualizar la información mostrada mediante la consulta de avisos recibidos.
 
-## 11. Control de versiones y colaboración
+## 11. Casos de uso y funcionalidades
 
-El proyecto utiliza Git para registrar los cambios y GitHub para compartir el repositorio entre los integrantes del equipo.
+La aplicación incorpora las funciones correspondientes a los casos de uso definidos en la documentación del proyecto.
 
-GitHub Desktop facilita la creación de commits, la consulta del historial y la sincronización de los archivos.
+| Caso de uso | Funcionalidad |
+|---|---|
+| CU-01 | Registrar avisos e indicaciones. |
+| CU-02 | Comunicar avisos de los menores. |
+| CU-03 | Consultar avisos recibidos por la educadora. |
+| CU-04 | Consultar información de los menores. |
+| CU-06 | Consultar personas autorizadas. |
+| CU-07 | Aclarar diferencias de información. |
 
-El archivo `.gitignore` evita incorporar al repositorio contraseñas, entornos virtuales y archivos temporales.
+**Funcionamiento de CU-07:**
 
-Cada integrante deberá registrar sus aportaciones mediante commits identificables y comprobar que el proyecto siga ejecutándose después de integrar los cambios.
+Este caso de uso permite que la recepcionista revise diferencias entre la información proporcionada y los datos registrados en el sistema.
+
+Para realizar la revisión puede consultar los antecedentes del menor mediante CU-04, comparar la información disponible y determinar si la diferencia pudo aclararse o si necesita una verificación adicional.
+
+Los resultados posibles son:
+
+- **Diferencia aclarada:** cuando se logra determinar cuál información es correcta.
+- **Pendiente de confirmación:** cuando no existe información suficiente para resolver la diferencia.
+
+De acuerdo con la trazabilidad del proyecto, CU-07 utiliza información previamente almacenada, pero no contempla guardar un historial independiente de aclaraciones. Por ello, el resultado de la revisión se presenta en la interfaz y los registros originales permanecen sin modificaciones.
+
+## 12. Estado actual del proyecto
+
+La versión actual cuenta con una aplicación de escritorio que integra la conexión con MySQL, el acceso mediante cuentas de usuario y las interfaces correspondientes a recepción y educadoras.
+
+### Funcionalidades desarrolladas
+
+- Organización del proyecto mediante módulos.
+- Conexión entre Python y MySQL.
+- Inicio de sesión.
+- Creación de cuentas para recepcionistas y educadoras.
+- Identificación de roles.
+- Interfaz principal de recepción.
+- Interfaz de educadoras.
+- Registro y comunicación de avisos.
+- Consulta de avisos recibidos.
+- Consulta de personas autorizadas.
+- Consulta de información relacionada con los menores.
+- Interfaz para aclarar diferencias de información.
+
+### Trabajo pendiente y mejoras
+
+- Completar las pruebas de funcionamiento de todos los casos de uso.
+- Verificar la persistencia de las operaciones que modifican datos.
+- Revisar el manejo de errores y validaciones.
+- Continuar ajustando las interfaces conforme a los prototipos de U2-E3.
+- Completar las evidencias y documentación de las siguientes etapas.
+
+## 13. Control de versiones y colaboración
+
+El proyecto utiliza Git y GitHub para mantener un control de los cambios realizados durante el desarrollo.
+
+GitHub Desktop facilita la administración del repositorio y permite:
+
+- Consultar archivos modificados.
+- Identificar archivos nuevos.
+- Crear commits.
+- Consultar el historial de versiones.
+- Sincronizar los cambios con GitHub.
+
+Cada integrante debe registrar sus modificaciones mediante commits con mensajes descriptivos.
+
+Antes de compartir los cambios se recomienda comprobar que el proyecto continúe ejecutándose correctamente.
+
+El archivo `.gitignore` evita incorporar al repositorio archivos temporales, entornos virtuales y credenciales privadas.
+
+Entre los archivos que no deben publicarse se encuentran:
+
+- `.env`
+- `.venv/`
+- `__pycache__/`
+- Archivos `.pyc`
+
+---
+
+**Proyecto académico: Sistema de Gestión de la Guardería «Pequeños Exploradores».**
+
+**Ingeniería de Software — Unidad 3, Evidencia 1.**
+
+**Equipo 14.**
