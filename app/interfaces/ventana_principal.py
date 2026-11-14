@@ -104,6 +104,13 @@ class VentanaPrincipal(ctk.CTk):
             size=(23, 16)
         )
 
+        # Version mas grande del mismo icono para el encabezado de personas autorizadas.
+        self.icono_titulo_personas = ctk.CTkImage(
+            light_image=imagen_icono_personas,
+            dark_image=imagen_icono_personas,
+            size=(38, 38)
+        )
+
         # Cargar la ilustracion decorativa inferior (PNG con fondo transparente).
         ruta_ilustracion = (
             Path(__file__).resolve().parent
@@ -426,6 +433,127 @@ class VentanaPrincipal(ctk.CTk):
             text_color=COLORES["secundario"]
         ).pack(anchor="w", pady=(0, 15))
 
+    def _titulo_personas_autorizadas(self):
+
+        encabezado = ctk.CTkFrame(
+            self.area_contenido,
+            fg_color=COLORES["azul"],
+            corner_radius=10
+        )
+        encabezado.pack(
+            fill="x",
+            pady=(5, 15)
+        )
+
+        ctk.CTkLabel(
+            encabezado,
+            image=self.icono_titulo_personas,
+            text="",
+            fg_color="transparent"
+        ).pack(
+            side="left",
+            padx=(14, 10),
+            pady=10
+        )
+
+        textos = ctk.CTkFrame(
+            encabezado,
+            fg_color="transparent"
+        )
+        textos.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            pady=8
+        )
+
+        ctk.CTkLabel(
+            textos,
+            text="Consultar personas autorizadas",
+            font=("Arial", 19, "bold"),
+            text_color=COLORES["texto"]
+        ).pack(anchor="w")
+
+        ctk.CTkLabel(
+            textos,
+            text="Visualice las personas autorizadas para recoger al menor.",
+            font=("Arial", 11),
+            text_color=COLORES["secundario"]
+        ).pack(anchor="w", pady=(2, 0))
+
+    def _titulo_registrar_avisos(self):
+
+        encabezado = ctk.CTkFrame(
+            self.area_contenido,
+            fg_color=COLORES["lavanda_claro"],
+            corner_radius=10
+        )
+        encabezado.pack(
+            fill="x",
+            pady=(5, 15)
+        )
+
+        ruta_icono = (
+            Path(__file__).resolve().parent
+            / "recursos_guarderia"
+            / "icono_registrar_avisos.png"
+        )
+
+        if ruta_icono.exists():
+            imagen = Image.open(ruta_icono).convert("RGBA")
+            self.icono_titulo_registrar_avisos = ctk.CTkImage(
+                light_image=imagen,
+                dark_image=imagen,
+                size=(38, 38)
+            )
+
+            ctk.CTkLabel(
+                encabezado,
+                image=self.icono_titulo_registrar_avisos,
+                text="",
+                fg_color="transparent"
+            ).pack(
+                side="left",
+                padx=(14, 10),
+                pady=10
+            )
+        else:
+            ctk.CTkLabel(
+                encabezado,
+                text="📋",
+                font=("Segoe UI Emoji", 30),
+                text_color=COLORES["morado_oscuro"]
+            ).pack(
+                side="left",
+                padx=(14, 10),
+                pady=10
+            )
+
+        textos = ctk.CTkFrame(
+            encabezado,
+            fg_color="transparent"
+        )
+        textos.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            pady=8
+        )
+
+        ctk.CTkLabel(
+            textos,
+            text="Registrar avisos e indicaciones",
+            font=("Arial", 19, "bold"),
+            text_color=COLORES["texto"]
+        ).pack(anchor="w")
+
+        ctk.CTkLabel(
+            textos,
+            text="Registre los avisos e indicaciones proporcionados por los tutores.",
+            font=("Arial", 11),
+            text_color=COLORES["secundario"]
+        ).pack(anchor="w", pady=(2, 0))
+
     def _panel(self, padre):
 
         return ctk.CTkFrame(
@@ -603,10 +731,13 @@ class VentanaPrincipal(ctk.CTk):
         self._seleccionar_menu("avisos")
         self._limpiar_area()
 
-        self._titulo_pagina(
-            "Avisos e indicaciones",
-            "Registre avisos y comuníquelos a la educadora correspondiente."
-        )
+        if seccion == "registrar":
+            self._titulo_registrar_avisos()
+        else:
+            self._titulo_pagina(
+                "Avisos e indicaciones",
+                "Registre avisos y comuníquelos a la educadora correspondiente."
+            )
 
         self._crear_pestanas(seccion)
 
@@ -1109,10 +1240,7 @@ class VentanaPrincipal(ctk.CTk):
         self._seleccionar_menu("personas")
         self._limpiar_area()
 
-        self._titulo_pagina(
-            "Consultar personas autorizadas",
-            "Visualice las personas autorizadas para recoger al menor."
-        )
+        self._titulo_personas_autorizadas()
 
         panel = self._panel(self.area_contenido)
         panel.pack(fill="both", expand=True)

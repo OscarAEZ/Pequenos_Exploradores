@@ -325,11 +325,21 @@ class VentanaEducadora(ctk.CTk):
                     text_color=COLORES["texto"]
                 ).pack(anchor="w", padx=16, pady=(13, 6))
 
+                fecha = aviso.get("fechaComunicacion")
+
+                if fecha is None:
+                    fecha_texto = "No registrada"
+                elif hasattr(fecha, "strftime"):
+                    fecha_texto = fecha.strftime("%d/%m/%Y %H:%M")
+                else:
+                    fecha_texto = str(fecha)
+
                 ctk.CTkLabel(
                     tarjeta,
                     text=(
                         f"Tutor: {aviso['tutor']}\n"
-                        f"Comunicado por: {aviso['recepcionista']}"
+                        f"Comunicado por: {aviso['recepcionista']}\n"
+                        f"Fecha de comunicación: {fecha_texto}"
                     ),
                     font=("Arial", 11),
                     text_color=COLORES["secundario"],
